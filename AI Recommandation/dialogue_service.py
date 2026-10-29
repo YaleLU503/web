@@ -246,9 +246,9 @@ def empty_result_message(result):
     if diagnostics.get('within_station_distance')==0:
         return 'Reachable green spaces were found, but none has a station within 2 km of its boundary. Facility requirements have not been checked.',[]
     required=[LABELS.get(k,k) for k,v in result.get('request',{}).get('dialogue_needs',{}).items() if v=='required']
-    answer=f"{result.get('candidate_count_after_filters',0)} candidates passed travel and station-distance checks. None of the {result.get('checked_candidate_count',0)} checked candidates has confirmed evidence for every required facility"
+    answer="We could not confirm all required facilities among the places checked"
     if required: answer+=' ('+', '.join(required)+')'
-    answer+='. Missing evidence does not mean a facility is unavailable. '+coverage_message(result)
+    answer+='. Try a longer travel time or adjust your facility requirements.'
     return answer,['Make toilets a preference, not a requirement'] if 'Toilets' in required else []
 
 
@@ -365,7 +365,7 @@ def handle(payload, invoke=None, recommender=None):
                     count=len(result['recommendations'])
                     answer=prefix+'Current preferences: '+state_summary(state)+'. \n\n'
                     if count:
-                        answer+=f'Showing {count} candidates below. '+coverage_message(result)
+                        answer+=f'Here are {count} recommended green spaces.'
                     else:
                         explanation,suggestions=empty_result_message(result)
                         answer+=explanation

@@ -4,7 +4,7 @@ No model-generated claims, invented thresholds, or inferred facility availabilit
 from recommendation_fit import build_requirement_matches, google_context
 
 RULES = {
- 'hiking': ('Walking / hiking','Uses mapped long-distance walking-route length, combined with ecological value. A lower score can reflect limited coverage of those mapped routes; it does not establish that walking is unsuitable.','It does not measure slope, route difficulty, pushchair access or every local footpath.'),
+ 'hiking': ('Walking / hiking','Uses mapped long-distance walking-route length, combined with ecological value.','It does not measure slope, route difficulty, pushchair access or every local footpath.'),
  'nature': ('Nature','Uses the dataset\'s normalized ecological-value indicator. Higher values indicate a stronger ecological-value signal within this scoring system.','It does not guarantee scenic views, wildlife sightings or quiet conditions.'),
  'cycling': ('Cycling','Combines mapped dedicated cycle paths and National Cycle Network routes with ecological value.','It does not establish surface quality, traffic safety or suitability for a particular bicycle.'),
  'camping': ('Camping','Uses mapped campsite points inside or up to 2 km from the asset, combined with ecological value.','It does not establish permission to camp, opening dates or booking availability.'),

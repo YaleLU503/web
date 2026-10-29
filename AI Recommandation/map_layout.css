@@ -116,3 +116,8 @@ h1{font-size:clamp(1.5rem,2.2vw,2.15rem)}
 .candidate-method>p{padding:5px 0}
 
 .candidate-scope-note{padding:8px;background:#fff7e5;border-radius:6px}.candidate-requirement-match{padding:5px 0}.candidate-detail blockquote{margin:8px 0;padding-left:10px;border-left:2px solid #c4d8ca;color:#496551}
+
+/* Persistent nearby-station highlight for the selected recommendation. */
+.selected-station-marker{width:12px;height:12px;z-index:5;pointer-events:none}
+.selected-station-dot{display:block;width:12px;height:12px;box-sizing:border-box;border:2px solid white;border-radius:50%;background:#3478ac;box-shadow:0 0 0 4px rgba(94,155,200,.28)}
+.selected-station-label{position:absolute;top:16px;left:50%;transform:translateX(-50%);white-space:nowrap;font:500 11px/1.4 "Segoe UI",sans-serif;color:#285775;background:rgba(255,255,255,.92);border-radius:4px;padding:2px 5px;box-shadow:0 1px 4px #0002}

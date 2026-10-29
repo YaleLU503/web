@@ -40,7 +40,7 @@
  const log=chat.querySelector('#chat-log'),options=chat.querySelector('#chat-options'),summary=chat.querySelector('#chat-state');
  let sid=sessionStorage.getItem('green-dialogue-v2-id'),lastUI=null,busy=false,generation=0;
  function startAtNewOrigin(){
-  focusedCandidate=null;if(map?.getSource('selected-candidate'))map.getSource('selected-candidate').setData({type:'FeatureCollection',features:[]});
+  showSelectedStation(null);focusedCandidate=null;if(map?.getSource('selected-candidate'))map.getSource('selected-candidate').setData({type:'FeatureCollection',features:[]});
   generation++;sid=null;sessionStorage.removeItem('green-dialogue-v2-id');lastUI=null;
   log.replaceChildren();options.replaceChildren();document.querySelector('#results').replaceChildren();
   busy=false;submit.disabled=false;document.querySelector('#chat-reset').disabled=false;document.querySelector('#chat-export').disabled=false;
@@ -61,6 +61,18 @@
   lastUI=ui();
  }
  let focusedCandidate=null;
+ let selectedStationMarker=null;
+ function showSelectedStation(station){
+  if(selectedStationMarker){selectedStationMarker.remove();selectedStationMarker=null;}
+  const coordinates=station?.coordinates;
+  if(!Array.isArray(coordinates)||coordinates.length<2||!coordinates.slice(0,2).every(Number.isFinite))return;
+  const element=document.createElement('div');element.className='selected-station-marker';
+  const dot=document.createElement('span');dot.className='selected-station-dot';
+  const label=document.createElement('span');label.className='selected-station-label';label.textContent=station.name||'Railway station';
+  element.append(dot,label);element.setAttribute('aria-label','Nearby station: '+label.textContent);
+  selectedStationMarker=new mapboxgl.Marker({element,anchor:'center'}).setLngLat(coordinates.slice(0,2)).addTo(map);
+ }
+
  function restoreFocusedCandidate(){
   if(!map||!focusedCandidate||!map.isStyleLoaded())return;
   const data={type:'FeatureCollection',features:[focusedCandidate]};
@@ -84,10 +96,11 @@
    const feature=matches[0];if(!feature){document.querySelector('#status').textContent='This green space could not be located on the map.';return}
    focusedCandidate=feature;
    if(!map.isStyleLoaded()){map.once('idle',()=>focusCandidate(item));return}
-   restoreFocusedCandidate();renderScoreProfile(feature.properties);
+   restoreFocusedCandidate();showSelectedStation(item.nearest_station);renderScoreProfile(feature.properties);
    document.querySelectorAll('.chat-candidate').forEach(row=>row.classList.toggle('is-map-selected',row.dataset.placeKey===String(item.place_id??item.name)));
    const bounds=new mapboxgl.LngLatBounds();
    function extend(c){if(typeof c[0]==='number')bounds.extend(c);else c.forEach(extend)}extend(feature.geometry.coordinates);
+   const stationCoords=item.nearest_station?.coordinates;if(Array.isArray(stationCoords)&&stationCoords.length>=2&&stationCoords.slice(0,2).every(Number.isFinite))bounds.extend(stationCoords.slice(0,2));
    const dock=document.querySelector('#chat-dock'),desktop=window.innerWidth>700;
    if(!desktop&&dock&&!dock.hidden)document.querySelector('#chat-minimize').click();
    const mapWidth=map.getContainer().clientWidth;
@@ -156,8 +169,7 @@
      const section=document.createElement('section');section.className='candidate-score-explanation';
      const title=document.createElement('strong');title.textContent=explanation.label+' '+Number(explanation.score).toFixed(2);
      const text=document.createElement('p');text.textContent=explanation.explanation;
-     const limit=document.createElement('p');limit.className='score-limitation';limit.textContent=explanation.limitation;
-     section.append(title,text,limit);body.append(section);
+     section.append(title,text);body.append(section);
     }
     if(item.maps_support){
      const section=document.createElement('section');section.className='candidate-maps-support';
@@ -187,7 +199,7 @@
   }
   if(result.explanation_only){document.querySelector('#status').textContent='Recommendation evidence shown in this reply.';return}
   showIsochrone(result.travel_time?.geojson);
-  document.querySelector('#status').textContent='Results · Eligible: '+result.candidate_count_after_filters+' · Checked: '+(result.checked_candidate_count??0)+' · Reused: '+(result.reused_candidate_count??0)+' · Newly checked: '+(result.newly_checked_candidate_count??0)+' · Shown: '+result.recommendations.length;
+  document.querySelector('#status').textContent=result.recommendations.length+' recommended green spaces';
  }
  function renderOptions(values){options.replaceChildren();for(const text of values||[]){const button=document.createElement('button');button.type='button';button.textContent=text;button.style.cssText='width:auto;margin:10px 8px 0 0;padding:7px 12px';button.onclick=()=>send(text);options.append(button)}}
  async function api(payload){const response=await fetch('/api/chat',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});const data=await response.json();if(!response.ok)throw new Error(data.error||'Request failed');return data}
@@ -201,7 +213,7 @@
    const data=await api({session_id:sid,message,ui:patch,use_maps:true});
    if(requestGeneration!==generation)return;
    sid=data.session_id;sessionStorage.setItem('green-dialogue-v2-id',sid);sync(data.state);addMessage('You',data.turn.user);const assistantEntry=addMessage('Assistant',data.turn.assistant);renderOptions(data.turn.suggestions);if(data.turn.evidence_candidate)renderResult({recommendations:[data.turn.evidence_candidate],explanation_only:true},assistantEntry);
-   if(data.clear_results){document.querySelector('#results').replaceChildren();lastUI=null;}
+   if(data.clear_results){showSelectedStation(null);document.querySelector('#results').replaceChildren();lastUI=null;}
    else if(data.result)renderResult(data.result,assistantEntry);
    else if(!data.turn.evidence_candidate)document.querySelector('#status').textContent='No updated recommendations this turn. Any cards below are from the previous search.';
    input.value='';
