@@ -1,0 +1,25 @@
+# Local environment variables and credentials
+.env
+__pycache__/
+web_demo_history.json
+
+# Local dialogue transcripts
+dialogue_sessions.sqlite3*
+
+dialogue_*check.json
+dialogue_smoke_result.json
+dialogue_intent_debug.json
+dialogue_server*.log
+
+# Generated local artifacts
+*.sqlite3*
+*.log
+*.zip
+followup_*/
+dialogue_test*/
+city_station_audit/
+facility_search_upgrade_test/
+*_output.json
+*_check.json
+*_connection_check.json
+maps_grounding_summaries.json

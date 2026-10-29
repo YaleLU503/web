@@ -1,0 +1,11 @@
+import assert from 'node:assert/strict';
+import {nearestStations,accessOptions} from './train_access.mjs';
+const station={properties:{name:'Far station'},geometry:{type:'Point',coordinates:[0.1,51]}};
+const candidates=nearestStations([station],51,0);
+assert(candidates[0].distance_km>2);
+const matrix={results:[{search_id:'taxi_access',locations:[{id:'station_0',properties:[{travel_time:600}]}]},{search_id:'transit_access',locations:[{id:'station_0',properties:[{travel_time:1200}]}]}]};
+const options=accessOptions(matrix,candidates,3600,'2026-10-23T09:00:00Z');
+assert.equal(options.length,2);assert.equal(options[0].remaining_seconds,3000);assert.equal(options[0].train_departure,'2026-10-23T09:10:00.000Z');
+assert.equal(accessOptions(matrix,candidates,500,'2026-10-23T09:00:00Z').length,0);
+assert.equal(accessOptions({results:[]},candidates,3600,'2026-10-23T09:00:00Z').length,0);
+console.log('Origin access tests passed: distant station retained, both access modes, transfer time deducted, departure advanced, no over-budget results.');

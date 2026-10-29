@@ -1,0 +1,25 @@
+{
+  "location": {
+    "latitude": 56.0,
+    "longitude": -4.25,
+    "radius_km": 600
+  },
+  "activities": [
+    { "tag": "cycling", "weight": 0.7 },
+    { "tag": "hiking", "weight": 0.3 }
+  ],
+  "hard_constraints": {
+    "access_allowed": true
+  },
+  "maps_needs": [
+    { "tag": "parking", "weight": 0.5 },
+    { "tag": "toilets", "weight": 0.3 },
+    { "tag": "family_friendly", "weight": 0.2 }
+  ],
+  "top_n": 5,
+  "weights": {
+    "activity": 0.75,
+    "location": 0.25,
+    "maps": 0.15
+  }
+}
