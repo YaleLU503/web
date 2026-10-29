@@ -1,0 +1,15 @@
+**
+!*.py
+!*.mjs
+!*.js
+!*.css
+!recommendation_web_demo.html
+!natural_assets_2.geojson
+!railway_stations.geojson
+test_*
+verify_*
+build_*
+add_report_*
+*report*.py
+*.env
+.env*

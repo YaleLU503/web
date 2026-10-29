@@ -1,8 +1,9 @@
 import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
-const root = path.dirname(fileURLToPath(import.meta.url)); const env = {};
-for (const line of fs.readFileSync(path.join(root, ".env"), "utf8").split(/\r?\n/)) { if (line.includes("=") && !line.trimStart().startsWith("#")) { const [k,...v]=line.split("="); env[k.trim()]=v.join("=").trim(); } }
+import {loadEnv} from './runtime_env.mjs';
+const root=path.dirname(fileURLToPath(import.meta.url));
+const env=loadEnv(root);
 const places = JSON.parse(fs.readFileSync(0, "utf8"));
 const model = env.GROQ_MODEL || "qwen/qwen3.8-27b";
 if (!Array.isArray(places)) throw new Error("Expected a JSON array of recommendation candidates.");

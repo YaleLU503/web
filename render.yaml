@@ -1,0 +1,24 @@
+services:
+  - type: web
+    name: green-space-ai
+    runtime: docker
+    plan: free
+    branch: main
+    dockerfilePath: ./AI Recommandation/Dockerfile
+    dockerContext: ./AI Recommandation
+    healthCheckPath: /healthz
+    envVars:
+      - key: HOST
+        value: 0.0.0.0
+      - key: GOOGLE_MAPS_API_KEY
+        sync: false
+      - key: GROQ_API_KEY
+        sync: false
+      - key: GROQ_MODEL
+        sync: false
+      - key: TRAVELTIME_APPLICATION_ID
+        sync: false
+      - key: TRAVELTIME_API_KEY
+        sync: false
+      - key: MAPBOX_PUBLIC_TOKEN
+        sync: false

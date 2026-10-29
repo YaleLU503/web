@@ -2,11 +2,9 @@ import fs from 'node:fs';
 import path from 'node:path';
 import {fileURLToPath} from 'node:url';
 import {nearestStations,accessOptions} from './train_access.mjs';
-const root=path.dirname(fileURLToPath(import.meta.url)),env={...process.env};
-for(const line of fs.readFileSync(path.join(root,'.env'),'utf8').split(/\r?\n/)){
- if(!line.includes('=')||line.trimStart().startsWith('#'))continue;
- const [k,...v]=line.split('=');env[k.trim()]=v.join('=').trim().replace(/^(['"])(.*)\1$/,'$2');
-}
+import {loadEnv} from './runtime_env.mjs';
+const root=path.dirname(fileURLToPath(import.meta.url));
+const env=loadEnv(root);
 const input=JSON.parse(fs.readFileSync(0,'utf8'));
 if(!Number.isFinite(input.minutes)||input.minutes<5||input.minutes>180)throw new Error('Invalid travel minutes');
 async function request(endpoint,body,geo=false){

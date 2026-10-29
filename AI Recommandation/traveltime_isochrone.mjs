@@ -2,12 +2,9 @@ import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 
-const root = path.dirname(fileURLToPath(import.meta.url));
-const env = {};
-for (const line of fs.readFileSync(path.join(root, ".env"), "utf8").split(/\r?\n/)) {
-  if (!line.includes("=") || line.trimStart().startsWith("#")) continue;
-  const [key, ...value] = line.split("="); env[key.trim()] = value.join("=").trim();
-}
+import {loadEnv} from './runtime_env.mjs';
+const root=path.dirname(fileURLToPath(import.meta.url));
+const env=loadEnv(root);
 const input = JSON.parse(fs.readFileSync(0, "utf8"));
 const minutes = Math.max(5, Math.min(180, Number(input.minutes) || 60));
 const transport = ["driving+ferry", "public_transport", "walking+ferry", "cycling+ferry"].includes(input.transport) ? input.transport : "driving+ferry";

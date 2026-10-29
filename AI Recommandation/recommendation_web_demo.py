@@ -5,6 +5,7 @@ Then open: http://127.0.0.1:8765
 """
 
 import argparse
+import os
 import json
 import subprocess
 from http import HTTPStatus
@@ -189,6 +190,9 @@ class AppHandler(SimpleHTTPRequestHandler):
         self.wfile.write(body)
 
     def do_GET(self):
+        if self.path == "/healthz":
+            self.send_json(HTTPStatus.OK, {"status": "ok"})
+            return
         if self.path.split("?", 1)[0] == "/reports/followup-fixes":
             report = ROOT / "followup_fixes_20261023" / "项目补充设计与修复说明.html"
             if not report.is_file():
@@ -283,10 +287,11 @@ class AppHandler(SimpleHTTPRequestHandler):
 
 def main():
     parser = argparse.ArgumentParser(description="Serve the local recommendation web demo.")
-    parser.add_argument("--port", type=int, default=8765)
+    parser.add_argument("--port", type=int, default=int(os.environ.get("PORT", "8765")))
+    parser.add_argument("--host", default=os.environ.get("HOST", "127.0.0.1"))
     args = parser.parse_args()
-    server = ThreadingHTTPServer(("127.0.0.1", args.port), AppHandler)
-    print(f"Recommendation demo: http://127.0.0.1:{args.port}")
+    server = ThreadingHTTPServer((args.host, args.port), AppHandler)
+    print(f"Recommendation demo: http://{args.host}:{args.port}")
     print("Press Ctrl+C to stop the server.")
     try:
         server.serve_forever()
