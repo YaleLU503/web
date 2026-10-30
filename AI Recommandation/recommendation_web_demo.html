@@ -47,7 +47,7 @@
 <link rel="stylesheet" href="/map_layout.css">
 </head>
 <body><main>
-  <header><div><p class="creator-credit">BY YaleLu</p><h1>Green Space Recommender</h1><p class="sub">Describe the visit you want. The system ranks green spaces first, then checks Maps only for the Top 5.</p></div></header>
+  <header><div><p class="creator-credit">BY Yale Lu</p><footer class="project-footer"><a href="https://github.com/YaleLU503/web" target="_blank" rel="noopener noreferrer">GitHub · YaleLU503/web ↗</a></footer><h1>go wild by train</h1></div></header>
   <div class="grid"><form class="panel" id="form">
     <h2>Explore green-space scores</h2><label for="exploreScore">Map colouring</label><select id="exploreScore"><option value="best_overall">Overall score</option><option value="hiking_score">Hiking</option><option value="cycling_score">Cycling</option><option value="camping_score">Camping</option><option value="birdwatching_score">Birdwatching</option><option value="coast_score">Coast / beach</option><option value="geology_score">Geology</option><option value="scaled_eco_status">Nature / ecology</option><option value="none">Hide score layer</option></select><p class="map-hint">All green spaces are visible. Darker and more opaque means a higher selected score.</p><hr style="border:0;border-top:1px solid var(--line);margin:20px 0"><h2>Find a reachable place</h2><label for="city">Origin</label><select id="city"><option>Glasgow</option><option>Edinburgh</option><option>Manchester</option><option>London</option><option>Birmingham</option><option>Bristol</option><option>Leeds</option><option>Liverpool</option></select>
     <label for="travelMinutes">Travel-time limit</label><div class="range-row"><input id="travelMinutes" type="range" min="15" max="180" value="120" step="15"><output id="travelOut">120 min</output></div><label for="transport">Travel mode</label><select id="transport"><option value="driving+ferry">Driving</option><option value="public_transport">Public transport</option><option value="cycling+ferry">Cycling</option><option value="walking+ferry">Walking</option></select>
@@ -55,7 +55,7 @@
     <label class="checks"><span><input id="access" type="checkbox" checked>Exclude only explicitly closed/private places</span><span><input id="maps" type="checkbox" checked>Check Maps for missing needs on the initial Top 5</span></label>
     <button id="submit" type="submit">Find recommendations</button><p class="note">The Maps key remains on the local server and is never sent to the browser.</p>
   </form><section class="workspace"><div class="map-panel"><div class="map-title"><h2>Explore green-space scores</h2><div id="scoreTabs" class="score-tabs"><button class="score-tab active" data-score="best_overall" type="button">Overall</button><button class="score-tab" data-score="hiking_score" type="button">Hiking</button><button class="score-tab" data-score="cycling_score" type="button">Cycling</button><button class="score-tab" data-score="camping_score" type="button">Camping</button><button class="score-tab" data-score="birdwatching_score" type="button">Birdwatching</button><button class="score-tab" data-score="coast_score" type="button">Coast</button><button class="score-tab" data-score="geology_score" type="button">Geology</button><button class="score-tab" data-score="scaled_eco_status" type="button">Nature</button><button class="score-tab" data-score="none" type="button">Hide layer</button></div></div><div id="map" aria-label="Interactive map with draggable starting-point marker"></div><p class="map-hint">Click a coloured score tag; hover a green space to highlight it. Select a city on the left, or drag the marker to set a custom starting point.</p></div><div id="status">Drag the map marker to your starting point, then describe your visit.</div><div id="results" class="results"><div class="empty">No recommendation run yet.</div></div></section></div>
-<footer class="project-footer"><a href="https://github.com/YaleLU503/web" target="_blank" rel="noopener noreferrer">GitHub · YaleLU503/web ↗</a></footer>
+
 </main>
 <script>
 
@@ -120,16 +120,25 @@ const initialOverallTimer=setInterval(()=>{if(map&&map.getLayer('green-score-fil
 const hoverRecoveryTimer=setInterval(()=>{if(!map)return;map.on('styledata',ensureHoverHighlightLayers);map.on('mousemove',event=>{if(!map.getLayer('green-score-fill'))return;const feature=map.queryRenderedFeatures(event.point,{layers:['green-score-fill']})[0];if(!feature){if(map.getLayer('green-score-hover'))map.setFilter('green-score-hover',['==',['get','name'],'']);if(map.getLayer('green-score-hover-fill'))map.setFilter('green-score-hover-fill',['==',['get','name'],'']);map.getCanvas().style.cursor='';mapHoverLabel.style.display='none';return}const p=feature.properties,field=document.querySelector('#exploreScoreMap').value,filter=['==',['get','name'],p.name||''];map.setFilter('green-score-hover',filter);map.setFilter('green-score-hover-fill',filter);map.getCanvas().style.cursor='pointer';mapHoverLabel.innerHTML=`<strong>${esc(p.name||'Unnamed green space')}</strong><br><span style="font-weight:600;color:#426256">${esc(scoreNames[field]||'Score')}: ${Number(p[field]||0).toFixed(2)}</span>`;mapHoverLabel.style.left=`${Math.min(event.point.x+12,document.querySelector('#map').clientWidth-215)}px`;mapHoverLabel.style.top=`${Math.max(event.point.y-7,7)}px`;mapHoverLabel.style.display='block';renderScoreProfile(p);document.querySelector('#status').textContent=''});clearInterval(hoverRecoveryTimer)},80);
 
 // Restore station points whenever the basemap style is replaced.
-let railwayStationData;
+let railwayStationData,railwayLineData;
+function restoreRailwayLines(){
+ if(!map||!railwayLineData||!map.isStyleLoaded())return;
+ if(!map.getSource('railway-network'))map.addSource('railway-network',{type:'geojson',data:railwayLineData});
+ if(!map.getLayer('railway-network-lines'))map.addLayer({id:'railway-network-lines',type:'line',source:'railway-network',slot:'top',paint:{'line-color':'#71878c','line-opacity':.7,'line-width':['interpolate',['linear'],['zoom'],3,.35,6,.7,10,1.5,15,2.5]}},map.getLayer('railway-stations-points')?'railway-stations-points':undefined);
+}
+
 function restoreStationLayer(){
   if(!map||!railwayStationData||!map.isStyleLoaded())return;
   if(!map.getSource('railway-stations'))map.addSource('railway-stations',{type:'geojson',data:railwayStationData});
-  if(!map.getLayer('railway-stations-points'))map.addLayer({id:'railway-stations-points',type:'circle',source:'railway-stations',slot:'top',paint:{'circle-radius':['interpolate',['linear'],['zoom'],0,.65,3,.85,6,1.3,9,2,13,3,16,3.8],'circle-color':'#91abc5','circle-opacity':.78,'circle-stroke-color':'#f4f8fb','circle-stroke-width':['interpolate',['linear'],['zoom'],3,.15,9,.4,13,.65]}});
+  if(!map.getLayer('railway-stations-points'))map.addLayer({id:'railway-stations-points',type:'circle',source:'railway-stations',slot:'top',paint:{'circle-radius':['interpolate',['linear'],['zoom'],0,.7,3,1,6,1.8,9,3,13,5,16,7],'circle-color':'#ffffff','circle-opacity':.95,'circle-stroke-color':'#64858d','circle-stroke-width':['interpolate',['linear'],['zoom'],3,.35,9,.65,13,1]}});
   // Keep custom station points above subsequently restored green-space layers.
   const layers=map.getStyle().layers||[];
   if(layers.length&&layers[layers.length-1].id!=='railway-stations-points')map.moveLayer('railway-stations-points');
 }
 async function initialiseStations(){
+  fetch('/api/railways').then(r=>{if(!r.ok)throw Error('Railway data unavailable');return r.json()}).then(data=>{railwayLineData=data;restoreRailwayLines()}).catch(()=>{});
+  map.on('style.load',restoreRailwayLines);map.on('idle',restoreRailwayLines);
+
   const response=await fetch('/api/stations');
   if(!response.ok)throw new Error('Station data could not be loaded.');
   railwayStationData=await response.json();
@@ -144,6 +153,6 @@ async function initialiseStations(){
   restoreStationLayer();
 }
 const stationInitTimer=setInterval(()=>{if(map){clearInterval(stationInitTimer);initialiseStations().catch(error=>{document.querySelector('#status').textContent=error.message})}},100);
-document.querySelector('.map-hint').append(' Small pale-blue dots: railway stations. Candidates require a station within 2 km of the green-space boundary (straight-line distance).');
+document.querySelector('.map-hint').append(' White outlined dots: railway stations. Candidates require a station within 2 km of the green-space boundary (straight-line distance).');
 
 </script><script src="/dialogue_ui.js"></script><script src="/map_layout.js"></script></body></html>

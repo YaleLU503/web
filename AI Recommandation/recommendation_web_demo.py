@@ -216,6 +216,9 @@ class AppHandler(SimpleHTTPRequestHandler):
             self.end_headers()
             self.wfile.write(body)
             return
+        if self.path == "/api/railways":
+            self.send_json(HTTPStatus.OK, json.loads((ROOT / "railway_lines.geojson").read_text(encoding="utf-8")))
+            return
         if self.path == "/api/stations":
             self.send_json(HTTPStatus.OK, station_filter.station_data())
             return

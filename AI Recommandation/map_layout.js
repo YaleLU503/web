@@ -53,7 +53,6 @@
  launcher.addEventListener('click',()=>{launcher.textContent='Chat with your guide';launcher.classList.remove('has-activity')});
  const resizeMap=new ResizeObserver(()=>{if(map)map.resize()});resizeMap.observe(document.querySelector('#map'));
  document.querySelector('.map-panel > .map-hint').textContent='Drag the marker to set your origin. Explore the activity colours and click a station to see its name.';
- document.querySelector('.sub').textContent='Explore the map. Find your next nature escape.';
 
  // Keep the complete score profile inside the map, beside the chat dock.
  scoreProfileObserver.disconnect();scoreProfileSizeObserver.disconnect();profileDesignObserver.disconnect();

@@ -16,7 +16,6 @@
  document.querySelector('label[for="transport"]').remove();
  input.placeholder='For example: Start from Edinburgh. I would like to watch birds and take a short walk.';
  submit.textContent='Send message';
- document.querySelector('.sub').textContent='Reach a station by public transport or taxi, then travel by train and on foot. Add details as you chat.';
  document.querySelector('button[type="submit"] + .note').textContent='Travel estimates use a reference departure time, not a selected journey date.';
  const markerTimer=setInterval(()=>{if(marker){
   clearInterval(markerTimer);
