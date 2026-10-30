@@ -124,7 +124,7 @@ let railwayStationData,railwayLineData;
 function restoreRailwayLines(){
  if(!map||!railwayLineData||!map.isStyleLoaded())return;
  if(!map.getSource('railway-network'))map.addSource('railway-network',{type:'geojson',data:railwayLineData});
- if(!map.getLayer('railway-network-lines'))map.addLayer({id:'railway-network-lines',type:'line',source:'railway-network',slot:'top',paint:{'line-color':'#71878c','line-opacity':.7,'line-width':['interpolate',['linear'],['zoom'],3,.35,6,.7,10,1.5,15,2.5]}},map.getLayer('railway-stations-points')?'railway-stations-points':undefined);
+ if(!map.getLayer('railway-network-lines'))map.addLayer({id:'railway-network-lines',type:'line',source:'railway-network',slot:'top',paint:{'line-color':'#ffffff','line-opacity':1,'line-width':['interpolate',['linear'],['zoom'],3,.35,6,.7,10,1.5,15,2.5]}},map.getLayer('railway-stations-points')?'railway-stations-points':undefined);
 }
 
 function restoreStationLayer(){
