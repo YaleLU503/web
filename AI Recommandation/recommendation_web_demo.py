@@ -143,6 +143,9 @@ def fallback_reason(candidate):
 
 
 def exploration_data():
+    display_path = ROOT / "green_spaces_display.geojson"
+    if display_path.exists():
+        return json.loads(display_path.read_text(encoding="utf-8"))
     dataset = json.loads((ROOT / "natural_assets_2.geojson").read_text(encoding="utf-8"))
     allowed = {"name", "best_overall", "hiking_score", "cycling_score", "camping_score", "birdwatching_score", "coast_score", "geology_score", "scaled_eco_status"}
     return {"type": "FeatureCollection", "features": [

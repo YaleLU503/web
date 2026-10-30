@@ -13,3 +13,5 @@ add_report_*
 *report*.py
 *.env
 .env*
+
+!green_spaces_display.geojson
