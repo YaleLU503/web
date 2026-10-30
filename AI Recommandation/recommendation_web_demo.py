@@ -4,6 +4,7 @@ Run: python recommendation_web_demo.py
 Then open: http://127.0.0.1:8765
 """
 
+import gzip
 import argparse
 import os
 import json
@@ -183,7 +184,13 @@ class AppHandler(SimpleHTTPRequestHandler):
 
     def send_json(self, status, data):
         body = json.dumps(data, ensure_ascii=False).encode("utf-8")
+        compressed = len(body) > 1024 and "gzip" in self.headers.get("Accept-Encoding", "")
+        if compressed:
+            body = gzip.compress(body, compresslevel=5)
         self.send_response(status)
+        if compressed:
+            self.send_header("Content-Encoding", "gzip")
+        self.send_header("Vary", "Accept-Encoding")
         self.send_header("Content-Type", "application/json; charset=utf-8")
         self.send_header("Content-Length", str(len(body)))
         self.end_headers()
