@@ -141,3 +141,6 @@ h1{font-size:clamp(25px,2.4vw,34px);line-height:1.12;margin:0}
 .map-panel>.map-hint{flex:none;font-size:11px;margin:6px 2px 0}
 @media(min-width:701px){header>div:first-child{max-width:calc(100% - min(490px,43vw) - 22px)}.map-title{padding-right:min(490px,43vw)}.score-tabs{flex-wrap:nowrap;overflow-x:auto;max-width:100%;padding-bottom:3px}.score-tab{flex:none}#chat-dock{top:16px;bottom:16px}}
 @media(max-width:700px){main{padding:10px}.map-panel{margin-bottom:0}.map-title{padding-right:0}.score-tabs{flex-wrap:nowrap;overflow-x:auto}.score-tab{flex:none}header>div:first-child:before{font-size:11px}.creator-credit,.project-footer{font-size:11px}#chat-dock{max-height:calc(100dvh - 20px)}.map-panel>.map-hint{display:none}}
+
+header .creator-credit,header .project-footer,header .project-footer a{display:block;margin:0;padding:0;font-family:inherit;font-size:12px;font-weight:600;line-height:1.6;letter-spacing:.06em;text-align:left;color:#527b65}
+header .project-footer{margin:0 0 7px}header .title-detail{display:block;margin-top:4px;font-size:.48em;line-height:1.3;letter-spacing:.02em;font-weight:600;color:#527b65}

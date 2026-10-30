@@ -44,10 +44,10 @@
   .empty{border-color:#b8d5c4;background:rgba(255,255,255,.46);color:#6a7e73}
   @media(max-width:900px){main{padding:20px}.grid{grid-template-columns:1fr}.panel{position:static}.map-title{align-items:flex-start;flex-direction:column;gap:9px}.score-tabs{width:100%}#map{min-height:390px}}
 </style>
-<link rel="stylesheet" href="/map_layout.css">
+<link rel="stylesheet" href="/map_layout.css?v=20261030b">
 </head>
 <body><main>
-  <header><div><p class="creator-credit">BY Yale Lu</p><footer class="project-footer"><a href="https://github.com/YaleLU503/web" target="_blank" rel="noopener noreferrer">GitHub · YaleLU503/web ↗</a></footer><h1>go wild by train</h1></div></header>
+  <header><div><p class="creator-credit">BY Yale Lu</p><footer class="project-footer"><a href="https://github.com/YaleLU503/web" target="_blank" rel="noopener noreferrer">GitHub · YaleLU503/web ↗</a></footer><h1>Go Wild by Train<span class="title-detail">Smart Recommendations</span></h1></div></header>
   <div class="grid"><form class="panel" id="form">
     <h2>Explore green-space scores</h2><label for="exploreScore">Map colouring</label><select id="exploreScore"><option value="best_overall">Overall score</option><option value="hiking_score">Hiking</option><option value="cycling_score">Cycling</option><option value="camping_score">Camping</option><option value="birdwatching_score">Birdwatching</option><option value="coast_score">Coast / beach</option><option value="geology_score">Geology</option><option value="scaled_eco_status">Nature / ecology</option><option value="none">Hide score layer</option></select><p class="map-hint">All green spaces are visible. Darker and more opaque means a higher selected score.</p><hr style="border:0;border-top:1px solid var(--line);margin:20px 0"><h2>Find a reachable place</h2><label for="city">Origin</label><select id="city"><option>Glasgow</option><option>Edinburgh</option><option>Manchester</option><option>London</option><option>Birmingham</option><option>Bristol</option><option>Leeds</option><option>Liverpool</option></select>
     <label for="travelMinutes">Travel-time limit</label><div class="range-row"><input id="travelMinutes" type="range" min="15" max="180" value="120" step="15"><output id="travelOut">120 min</output></div><label for="transport">Travel mode</label><select id="transport"><option value="driving+ferry">Driving</option><option value="public_transport">Public transport</option><option value="cycling+ferry">Cycling</option><option value="walking+ferry">Walking</option></select>
@@ -155,4 +155,4 @@ async function initialiseStations(){
 const stationInitTimer=setInterval(()=>{if(map){clearInterval(stationInitTimer);initialiseStations().catch(error=>{document.querySelector('#status').textContent=error.message})}},100);
 document.querySelector('.map-hint').append(' White outlined dots: railway stations. Candidates require a station within 2 km of the green-space boundary (straight-line distance).');
 
-</script><script src="/dialogue_ui.js"></script><script src="/map_layout.js"></script></body></html>
+</script><script src="/dialogue_ui.js?v=20261030b"></script><script src="/map_layout.js?v=20261030b"></script></body></html>

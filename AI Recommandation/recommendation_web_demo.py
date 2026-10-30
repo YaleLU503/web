@@ -199,7 +199,13 @@ class AppHandler(SimpleHTTPRequestHandler):
         self.end_headers()
         self.wfile.write(body)
 
+    def end_headers(self):
+        if self.path.split("?", 1)[0].endswith((".html", ".js", ".css")) or self.path == "/":
+            self.send_header("Cache-Control", "no-cache")
+        super().end_headers()
+
     def do_GET(self):
+        self.path = self.path.split("?", 1)[0]
         if self.path == "/healthz":
             self.send_json(HTTPStatus.OK, {"status": "ok"})
             return
