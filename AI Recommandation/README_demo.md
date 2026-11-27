@@ -1,21 +1,14 @@
 # Green-space recommendation demo
 
+## Background and purpose
+
+Finding a suitable green space involves balancing interests, travel time, rail access and practical needs such as toilets or family-friendly facilities. This project brings these considerations into one interactive UK map and conversational recommendation service.
+
+The aim is to help people discover green spaces reachable by train, compare activity-specific indicators, refine their preferences through follow-up conversation, and understand the evidence behind each recommendation.
+
 ## [🌿 Open the live website](https://green-space-ai.onrender.com/)
 
 ![Green-space recommendation website](design_preview.png)
-
-## Tools and services
-
-| Component | Role |
-| --- | --- |
-| Python | Recommendation service, spatial filtering, state validation and evidence checks |
-| Node.js | Model, map-enrichment and travel-service integrations |
-| Mapbox GL JS | Interactive map, green-space scores, railways and stations |
-| Groq | Structured intent and evidence extraction |
-| TravelTime | Travel-time reachability estimates |
-| Google Maps / Places | Matched place information and attributable visitor evidence |
-| SQLite | Local multi-turn conversation storage |
-| Docker and Render | Application packaging and web deployment |
 
 ## Interaction workflow
 
@@ -29,7 +22,7 @@
 ## Data sources
 
 - **Green-space geometry and activity indicators** come from the bundled project dataset, natural_assets_2.geojson. The project inherits its provenance and redistribution conditions.
-- **Railway stations** derive from the parent project's src/505network_nodes.geojson. Operational freshness requires separate verification.
+- **Transport POIs and rail connections** are sourced from OpenStreetMap (OSM), retaining stations and railway links classified as operational in the prepared dataset.
 - **Reachability** is supplied by TravelTime using the configured travel assumptions.
 - **Place and visitor evidence** comes from matched Google Maps / Places responses, with source attribution.
 - **Basemap rendering** uses Mapbox and the configured public browser token.
@@ -62,7 +55,7 @@ Configure Google Maps/Places, Groq, TravelTime and a Mapbox public browser token
 
 `dialogue_llm.mjs` extracts structured intent through Groq; `dialogue_service.py` validates and merges state and stores sessions locally. `dialogue_policies.py` protects follow-up updates and resolves places. `review_followup.py` validates source quotations. `facility_search.py` manages bounded facility checks and reuse. `station_filter.py`, `train_access.mjs` and `traveltime_train.mjs` handle spatial and travel constraints. `recommendation_fit.py` and `recommendation_explanations.py` explain indicator and facility evidence.
 
-The bundled `natural_assets_2.geojson` supplies project green-space geometry and scores. `railway_stations.geojson` derives from the parent project's `src/505network_nodes.geojson`; station freshness and operational status are inherited. Data provenance and reuse permissions must be checked before redistribution outside the original project context.
+The bundled `natural_assets_2.geojson` supplies project green-space geometry and scores. Transport POIs and rail connections come from OpenStreetMap (OSM), with operational stations and railway links retained during data preparation.
 
 ## Local tests
 
@@ -84,3 +77,16 @@ The optional local report URL returns 404 when report artifacts are absent; repo
 Use New > Blueprint and connect this repository on main. The root render.yaml configures a Free Docker web service with Python and Node.js. Enter the six provider configuration values in Render; never commit credentials. The service reads PORT and binds to HOST=0.0.0.0. /healthz is a lightweight health check without external API calls. Add the final site URL to any Mapbox token URL restrictions.
 
 Free instances sleep when idle and local SQLite conversations are ephemeral across restarts/redeployments. Start a new conversation if an old browser session no longer exists. This deployment remains a demonstration with serialized chat processing, not a production multi-user service.
+
+## Tools and services
+
+| Component | Role |
+| --- | --- |
+| Python | Recommendation service, spatial filtering, state validation and evidence checks |
+| Node.js | Model, map-enrichment and travel-service integrations |
+| Mapbox GL JS | Interactive map, green-space scores, railways and stations |
+| Groq | Structured intent and evidence extraction |
+| TravelTime | Travel-time reachability estimates |
+| Google Maps / Places | Matched place information and attributable visitor evidence |
+| SQLite | Local multi-turn conversation storage |
+| Docker and Render | Application packaging and web deployment |
